@@ -38,11 +38,17 @@ class NextEventPlayer {
 
   static String _getInitials(String name) {
     final names = name.split(' ');
+    String initials = '';
 
-    final firstChar = names.first[0];
-    final lastChar = names.last[0];
+    if (names.length == 1) {
+      initials = names.first.substring(0, 2);
+    } else {
+      final firstChar = names.first[0];
+      final lastChar = names.last[0];
+      initials = '$firstChar$lastChar';
+    }
 
-    return '$firstChar$lastChar';
+    return initials.toUpperCase();
   }
 }
 
@@ -59,5 +65,14 @@ void main() {
     expect(initialsOf('Pedro Carvalho'), 'PC');
 
     expect(initialsOf('Marcos Castro Da Silva'), 'MS');
+    
+    expect(initialsOf('edison sousa'), 'ES');
+  });
+
+  test('Should return the firs letters of the first name', () async {
+    expect(initialsOf('Laecio'), 'LA');
+    expect(initialsOf('Pedro'), 'PE');
+    expect(initialsOf('Marcos'), 'MA');
+    expect(initialsOf('fabio'), 'FA');
   });
 }
