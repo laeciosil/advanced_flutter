@@ -53,13 +53,13 @@ void main() {
 
     final player3 = NextEventPlayer(
       id: '',
-      name: 'Pedro Carvalho',
+      name: 'Marcos Castro Da Silva',
       photo: '',
       position: '',
       isConformed: true,
       confirmationDate: DateTime.now(),
     );
 
-    expect(player3.getInitialsLetters(), 'PC');
+    expect(player3.getInitialsLetters(), 'MS');
   });
 }
