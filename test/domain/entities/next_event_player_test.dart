@@ -28,38 +28,17 @@ class NextEventPlayer {
 }
 
 void main() {
+  NextEventPlayer makeSut(String name) => NextEventPlayer(
+        id: '',
+        name: name,
+        isConformed: true,
+      );
+
   test('Should return the first letter of the firs and last names ', () async {
-    final player = NextEventPlayer(
-      id: '',
-      name: 'Laecio Silva',
-      photo: '',
-      position: '',
-      isConformed: true,
-      confirmationDate: DateTime.now(),
-    );
+    expect(makeSut('Laecio Silva').getInitialsLetters(), 'LS');
 
-    expect(player.getInitialsLetters(), 'LS');
+    expect(makeSut('Pedro Carvalho').getInitialsLetters(), 'PC');
 
-    final player2 = NextEventPlayer(
-      id: '',
-      name: 'Pedro Carvalho',
-      photo: '',
-      position: '',
-      isConformed: true,
-      confirmationDate: DateTime.now(),
-    );
-
-    expect(player2.getInitialsLetters(), 'PC');
-
-    final player3 = NextEventPlayer(
-      id: '',
-      name: 'Marcos Castro Da Silva',
-      photo: '',
-      position: '',
-      isConformed: true,
-      confirmationDate: DateTime.now(),
-    );
-
-    expect(player3.getInitialsLetters(), 'MS');
+    expect(makeSut('Marcos Castro Da Silva').getInitialsLetters(), 'MS');
   });
 }
