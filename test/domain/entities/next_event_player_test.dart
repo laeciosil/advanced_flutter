@@ -20,7 +20,10 @@ class NextEventPlayer {
   String getInitialsLetters() {
     final names = name.split(' ');
 
-    return '${names.first[0]}${names.last[0]}';
+    final firstChar = names.first[0];
+    final lastChar = names.last[0];
+
+    return '$firstChar$lastChar';
   }
 }
 
@@ -35,9 +38,7 @@ void main() {
       confirmationDate: DateTime.now(),
     );
 
-    final initialsLetters = player.getInitialsLetters();
-
-    expect(initialsLetters, 'LS');
+    expect(player.getInitialsLetters(), 'LS');
 
     final player2 = NextEventPlayer(
       id: '',
@@ -48,8 +49,17 @@ void main() {
       confirmationDate: DateTime.now(),
     );
 
-    final initialsLetters2 = player2.getInitialsLetters();
+    expect(player2.getInitialsLetters(), 'PC');
 
-    expect(initialsLetters2, 'PC');
+    final player3 = NextEventPlayer(
+      id: '',
+      name: 'Pedro Carvalho',
+      photo: '',
+      position: '',
+      isConformed: true,
+      confirmationDate: DateTime.now(),
+    );
+
+    expect(player3.getInitialsLetters(), 'PC');
   });
 }
