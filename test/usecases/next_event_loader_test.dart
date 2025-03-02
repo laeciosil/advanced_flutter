@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter_test/flutter_test.dart';
 
 class NextEventLoader {
@@ -14,11 +12,18 @@ class NextEventLoader {
   }
 }
 
-class LoadedNextEventRepository {
+abstract class LoadedNextEventRepository {
+  Future<void> loadNextEvent({required String groupId});
+}
+
+@override
+class LoadedNextEventMockRepository implements LoadedNextEventRepository {
   String? groupId;
+  var callsCount = 0;
 
   Future<void> loadNextEvent({required String groupId}) async {
     this.groupId = groupId;
+    callsCount++;
   }
 }
 
@@ -26,12 +31,11 @@ void main() {
   test('Should load event data from repository', () async {
     final groupId = DateTime.now().millisecondsSinceEpoch.toString();
 
-     final repo = LoadedNextEventRepository();
+    final repo = LoadedNextEventMockRepository();
     final sut = NextEventLoader(repo: repo);
     await sut(groupId: groupId);
 
     expect(repo.groupId, groupId);
-
+    expect(repo.callsCount, 1);
   });
-
 }
