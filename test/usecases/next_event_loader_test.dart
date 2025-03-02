@@ -16,11 +16,11 @@ abstract class LoadedNextEventRepository {
   Future<void> loadNextEvent({required String groupId});
 }
 
-@override
 class LoadedNextEventMockRepository implements LoadedNextEventRepository {
   String? groupId;
   var callsCount = 0;
-
+  
+  @override
   Future<void> loadNextEvent({required String groupId}) async {
     this.groupId = groupId;
     callsCount++;
