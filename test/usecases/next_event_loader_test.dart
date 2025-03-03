@@ -5,11 +5,6 @@ import 'package:advanced_flutter/domain/usecases/next_event_loader_usecase.dart'
 import 'package:flutter_test/flutter_test.dart';
 
 
-
-
-
-
-
 class LoadedNextEventSpyRepository implements LoadedNextEventRepository {
   String? groupId;
   var callsCount = 0;
