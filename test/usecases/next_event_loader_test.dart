@@ -2,6 +2,8 @@ import 'package:advanced_flutter/domain/entities/next_event.dart';
 import 'package:advanced_flutter/domain/entities/next_event_player.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../domain/repositories/load_next_events_repository.dart';
+
 class NextEventLoader {
   NextEventLoader({
     required this.repo,
@@ -16,9 +18,6 @@ class NextEventLoader {
 
 
 
-abstract class LoadedNextEventRepository {
-  Future<NextEvent> loadNextEvent({required String groupId});
-}
 
 class LoadedNextEventSpyRepository implements LoadedNextEventRepository {
   String? groupId;
