@@ -1,7 +1,7 @@
 import 'package:advanced_flutter/domain/entities/next_event.dart';
 import 'package:advanced_flutter/domain/entities/next_event_player.dart';
 import 'package:advanced_flutter/domain/repositories/load_next_events_repository.dart';
-import 'package:advanced_flutter/domain/usecases/next_event_loader_usecase.dart';
+import 'package:advanced_flutter/domain/usecases/next_event_loader.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 
