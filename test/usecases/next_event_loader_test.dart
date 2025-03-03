@@ -4,6 +4,7 @@ import 'package:advanced_flutter/domain/repositories/load_next_events_repository
 import 'package:advanced_flutter/domain/usecases/next_event_loader.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/fakes.dart';
 
 class LoadedNextEventSpyRepository implements LoadedNextEventRepository {
   String? groupId;
@@ -16,7 +17,7 @@ class LoadedNextEventSpyRepository implements LoadedNextEventRepository {
     this.groupId = groupId;
     callsCount++;
 
-    if(error != null) throw error!;
+    if (error != null) throw error!;
     return output!;
   }
 }
@@ -27,7 +28,7 @@ void main() {
   late NextEventLoader sut;
 
   setUp(() {
-    groupId = DateTime.now().millisecondsSinceEpoch.toString();
+    groupId = anyString();
     repo = LoadedNextEventSpyRepository();
     repo.output = NextEvent(
       groupName: 'any group name',
@@ -82,13 +83,10 @@ void main() {
         repo.output?.players[1].confirmationDate);
   });
 
-  
   test('Should rethrow on error', () async {
     final error = Error();
     repo.error = error;
     final future = sut(groupId: groupId);
     expect(future, throwsA(error));
-
-   
   });
 }
