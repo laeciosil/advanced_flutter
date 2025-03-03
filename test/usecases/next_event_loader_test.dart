@@ -1,3 +1,4 @@
+import 'package:advanced_flutter/domain/entities/next_event.dart';
 import 'package:advanced_flutter/domain/entities/next_event_player.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -13,17 +14,7 @@ class NextEventLoader {
   }
 }
 
-class NextEvent {
-  final String groupName;
-  final DateTime date;
-  final List<NextEventPlayer> players;
 
-  NextEvent({
-    required this.groupName,
-    required this.date,
-    required this.players,
-  });
-}
 
 abstract class LoadedNextEventRepository {
   Future<NextEvent> loadNextEvent({required String groupId});
