@@ -1,3 +1,4 @@
+import 'package:advanced_flutter/domain/entities/next_event_player.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class NextEventLoader {
@@ -7,34 +8,68 @@ class NextEventLoader {
 
   final LoadedNextEventRepository repo;
 
-  Future<void> call({required String groupId}) async {
-    await repo.loadNextEvent(groupId: groupId);
+  Future<NextEvent> call({required String groupId}) async {
+    return await repo.loadNextEvent(groupId: groupId);
   }
 }
 
-abstract class LoadedNextEventRepository {
-  Future<void> loadNextEvent({required String groupId});
+class NextEvent {
+  final String groupName;
+  final DateTime date;
+  final List<NextEventPlayer> players;
+
+  NextEvent({
+    required this.groupName,
+    required this.date,
+    required this.players,
+  });
 }
 
-class LoadedNextEventMockRepository implements LoadedNextEventRepository {
+abstract class LoadedNextEventRepository {
+  Future<NextEvent> loadNextEvent({required String groupId});
+}
+
+class LoadedNextEventSpyRepository implements LoadedNextEventRepository {
   String? groupId;
   var callsCount = 0;
-  
+  NextEvent? output;
+
   @override
-  Future<void> loadNextEvent({required String groupId}) async {
+  Future<NextEvent> loadNextEvent({required String groupId}) async {
     this.groupId = groupId;
     callsCount++;
+    return output!;
   }
 }
 
 void main() {
   late String groupId;
-  late LoadedNextEventMockRepository repo;
+  late LoadedNextEventSpyRepository repo;
   late NextEventLoader sut;
 
   setUp(() {
     groupId = DateTime.now().millisecondsSinceEpoch.toString();
-    repo = LoadedNextEventMockRepository();
+    repo = LoadedNextEventSpyRepository();
+    repo.output = NextEvent(
+      groupName: 'any group name',
+      date: DateTime.now(),
+      players: [
+        NextEventPlayer(
+          id: 'any id 1',
+          name: 'any name 1',
+          photo: 'any photo 1',
+          isConformed: true,
+          confirmationDate: DateTime.now(),
+        ),
+        NextEventPlayer(
+          id: 'any id 2',
+          name: 'any name 2',
+          isConformed: false,
+          position: 'any position 2',
+          confirmationDate: DateTime.now(),
+        )
+      ],
+    );
     sut = NextEventLoader(repo: repo);
   });
 
@@ -43,5 +78,28 @@ void main() {
 
     expect(repo.groupId, groupId);
     expect(repo.callsCount, 1);
+  });
+
+  test('Should load event data on success', () async {
+    final event = await sut(groupId: groupId);
+
+    expect(event.groupName, repo.output?.groupName);
+    expect(event.date, repo.output?.date);
+    expect(event.players.length, 2);
+    expect(event.players[0].id, repo.output?.players[0].id);
+    expect(event.players[0].name, repo.output?.players[0].name);
+    expect(event.players[0].initials, isNotEmpty);
+    expect(event.players[0].photo, repo.output?.players[0].photo);
+    expect(event.players[0].isConformed, repo.output?.players[0].isConformed);
+    expect(event.players[0].confirmationDate,
+        repo.output?.players[0].confirmationDate);
+
+    expect(event.players[1].id, repo.output?.players[1].id);
+    expect(event.players[1].name, repo.output?.players[1].name);
+    expect(event.players[1].initials, isNotEmpty);
+    expect(event.players[1].position, repo.output?.players[1].position);
+    expect(event.players[1].isConformed, repo.output?.players[1].isConformed);
+    expect(event.players[1].confirmationDate,
+        repo.output?.players[1].confirmationDate);
   });
 }
