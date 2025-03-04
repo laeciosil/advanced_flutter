@@ -9,18 +9,29 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/fakes.dart';
 
 class LoadNextEventHttpRepository {
-  LoadNextEventHttpRepository({required this.httpClient});
+  LoadNextEventHttpRepository({
+    required this.httpClient,
+    required this.url,
+  });
 
   final Client httpClient;
+  final String url;
 
   Future<void> loadNextEvent({required String groupId}) async {
-    await httpClient.get(Uri());
+    final uri = Uri.parse(url.replaceFirst(':groupId', groupId));
+    final headers = {
+      'content-type': 'application/json',
+      'accept': 'application/json'
+    };
+    await httpClient.get(uri, headers: headers);
   }
 }
 
 class HttpClientSpy implements Client {
   String? method;
   int callsCount = 0;
+  String? url;
+  Map<String, String>? headers;
 
   @override
   void close() {}
@@ -35,6 +46,8 @@ class HttpClientSpy implements Client {
   Future<Response> get(Uri url, {Map<String, String>? headers}) async {
     method = 'get';
     callsCount++;
+    this.url = url.toString();
+    this.headers = headers;
     return Response('', 200);
   }
 
@@ -78,15 +91,34 @@ class HttpClientSpy implements Client {
 }
 
 void main() {
+  late HttpClientSpy httpClient;
+  late LoadNextEventHttpRepository sut;
+  late String groupId;
+
+  setUp(() {
+    groupId = anyString();
+    const url = 'https//domain.com/api/groups/:groupId/next_event';
+    httpClient = HttpClientSpy();
+    sut = LoadNextEventHttpRepository(httpClient: httpClient, url: url);
+  });
+
   test('should request with correct method', () async {
-    final groupId = anyString();
-    final httpClient = HttpClientSpy();
-
-    final sut = LoadNextEventHttpRepository(httpClient: httpClient);
-
     await sut.loadNextEvent(groupId: groupId);
 
     expect(httpClient.method, 'get');
     expect(httpClient.callsCount, 1);
+  });
+
+  test('should request with correct url', () async {
+    await sut.loadNextEvent(groupId: groupId);
+
+    expect(httpClient.url, 'https//domain.com/api/groups/$groupId/next_event');
+  });
+
+  test('should request with correct headers', () async {
+    await sut.loadNextEvent(groupId: groupId);
+
+    expect(httpClient.headers?['content-type'], 'application/json');
+    expect(httpClient.headers?['accept'], 'application/json');
   });
 }
