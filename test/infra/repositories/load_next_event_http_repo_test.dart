@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:advanced_flutter/domain/entities/domain_error.dart';
-import 'package:advanced_flutter/infra/load_next_event_http_repo.dart';
+import 'package:advanced_flutter/infra/api/repositories/load_next_event_http_repo.dart';
 import 'package:http/http.dart';
 
 import 'package:flutter_test/flutter_test.dart';
