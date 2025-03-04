@@ -11,6 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/fakes.dart';
 
+enum DomainError { unexpected }
+
 class LoadNextEventHttpRepository implements LoadedNextEventRepository {
   LoadNextEventHttpRepository({
     required this.httpClient,
@@ -28,6 +30,8 @@ class LoadNextEventHttpRepository implements LoadedNextEventRepository {
       'accept': 'application/json'
     };
     final response = await httpClient.get(uri, headers: headers);
+
+    if (response.statusCode == 400) throw DomainError.unexpected;
 
     final event = jsonDecode(response.body);
 
@@ -182,5 +186,13 @@ void main() {
     expect(event.players[1].position, 'position 2');
     expect(event.players[1].photo, 'photo 2');
     expect(event.date, DateTime(2025, 3, 10, 15, 30));
+  });
+
+  test('should throw UnexpectedError on 400', () async {
+    httpClient.statusCode = 400;
+
+    final future = sut.loadNextEvent(groupId: groupId);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
