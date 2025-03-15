@@ -12,24 +12,30 @@ class LoadNextEventApiRepository {
 
   Future<NextEvent> loadNextEvent({required String groupId}) async {
     final event = await httpClient.get(url: url, params: {"groupId": groupId});
-    return NextEvent(
-      groupName: event['groupName'],
-      date: DateTime.parse(event['date']),
-      players: event['players']
-          .map<NextEventPlayer>(
-            (player) => NextEventPlayer(
-              id: player['id'],
-              name: player['name'],
-              isConformed: player['isConfirmed'],
-              confirmationDate:
-                  DateTime.tryParse(player['confirmationDate'] ?? ''),
-              photo: player['photo'],
-              position: player['position'],
-            ),
-          )
-          .toList(),
-    );
+    return NextEventMapper.toObject(event);
   }
+}
+
+class NextEventMapper {
+  static NextEvent toObject(Map<String, dynamic> json) => NextEvent(
+        groupName: json['groupName'],
+        date: DateTime.parse(json['date']),
+        players: json['players']
+            .map<NextEventPlayer>(
+                (player) => NextEventPlayerMapper.toObject(player))
+            .toList(),
+      );
+}
+
+class NextEventPlayerMapper {
+  static NextEventPlayer toObject(Map<String, dynamic> json) => NextEventPlayer(
+        id: json['id'],
+        name: json['name'],
+        isConformed: json['isConfirmed'],
+        confirmationDate: DateTime.tryParse(json['confirmationDate'] ?? ''),
+        photo: json['photo'],
+        position: json['position'],
+      );
 }
 
 abstract class HttpGetClient {
@@ -41,6 +47,7 @@ class HttpGetClientSpy implements HttpGetClient {
   int callsCount = 0;
   Map<String, String>? params;
   dynamic response;
+  Error? error;
 
   @override
   Future<dynamic> get(
@@ -48,6 +55,7 @@ class HttpGetClientSpy implements HttpGetClient {
     this.url = url;
     this.params = params;
     callsCount++;
+    if (error != null) throw error!;
     return response;
   }
 }
@@ -104,5 +112,14 @@ void main() {
     expect(event.players[1].position, 'position 2');
     expect(event.players[1].photo, 'photo 2');
     expect(event.date, DateTime(2025, 3, 10, 15, 30));
+  });
+
+  test('should throw UnexpectedError on error', () async {
+    final error = Error();
+    httpClient.error = error;
+
+    final future = sut.loadNextEvent(groupId: groupId);
+
+    expect(future, throwsA(error));
   });
 }
