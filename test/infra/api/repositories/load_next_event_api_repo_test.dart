@@ -1,5 +1,6 @@
 import 'package:advanced_flutter/domain/entities/next_event.dart';
 import 'package:advanced_flutter/domain/entities/next_event_player.dart';
+import 'package:advanced_flutter/infra/api/clients/http_get_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../helpers/fakes.dart';
@@ -37,10 +38,6 @@ class NextEventPlayerMapper {
         photo: json['photo'],
         position: json['position'],
       );
-}
-
-abstract class HttpGetClient {
-  Future<T> get<T>({required String url, Map<String, String>? params});
 }
 
 class HttpGetClientSpy implements HttpGetClient {
