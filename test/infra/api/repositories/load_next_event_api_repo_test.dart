@@ -11,7 +11,8 @@ class LoadNextEventApiRepository {
   LoadNextEventApiRepository({required this.httpClient, required this.url});
 
   Future<NextEvent> loadNextEvent({required String groupId}) async {
-    final event = await httpClient.get(url: url, params: {"groupId": groupId});
+    final event = await httpClient
+        .get<Map<String, dynamic>>(url: url, params: {"groupId": groupId});
     return NextEventMapper.toObject(event);
   }
 }
@@ -39,7 +40,7 @@ class NextEventPlayerMapper {
 }
 
 abstract class HttpGetClient {
-  Future<dynamic> get({required String url, Map<String, String>? params});
+  Future<T> get<T>({required String url, Map<String, String>? params});
 }
 
 class HttpGetClientSpy implements HttpGetClient {
@@ -50,8 +51,7 @@ class HttpGetClientSpy implements HttpGetClient {
   Error? error;
 
   @override
-  Future<dynamic> get(
-      {required String url, Map<String, String>? params}) async {
+  Future<T> get<T>({required String url, Map<String, String>? params}) async {
     this.url = url;
     this.params = params;
     callsCount++;
