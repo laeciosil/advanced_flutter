@@ -18,16 +18,16 @@ class LoadNextEventApiRepository {
 
 class NextEventMapper {
   static NextEvent toObject(Map<String, dynamic> json) => NextEvent(
-        groupName: json['groupName'],
-        date: DateTime.parse(json['date']),
-        players: json['players']
-            .map<NextEventPlayer>(
-                (player) => NextEventPlayerMapper.toObject(player))
-            .toList(),
-      );
+      groupName: json['groupName'],
+      date: DateTime.parse(json['date']),
+      players: NextEventPlayerMapper.toList(json['players']));
 }
 
 class NextEventPlayerMapper {
+  static List<NextEventPlayer> toList(List<Map<String, dynamic>> arr) => arr
+      .map<NextEventPlayer>((player) => NextEventPlayerMapper.toObject(player))
+      .toList();
+
   static NextEventPlayer toObject(Map<String, dynamic> json) => NextEventPlayer(
         id: json['id'],
         name: json['name'],
