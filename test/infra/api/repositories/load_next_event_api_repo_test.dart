@@ -1,44 +1,8 @@
-import 'package:advanced_flutter/domain/entities/next_event.dart';
-import 'package:advanced_flutter/domain/entities/next_event_player.dart';
 import 'package:advanced_flutter/infra/api/clients/http_get_client.dart';
+import 'package:advanced_flutter/infra/api/repositories/load_next_event_api_repo.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../helpers/fakes.dart';
-
-class LoadNextEventApiRepository {
-  final HttpGetClient httpClient;
-  final String url;
-
-  LoadNextEventApiRepository({required this.httpClient, required this.url});
-
-  Future<NextEvent> loadNextEvent({required String groupId}) async {
-    final event = await httpClient
-        .get<Map<String, dynamic>>(url: url, params: {"groupId": groupId});
-    return NextEventMapper.toObject(event);
-  }
-}
-
-class NextEventMapper {
-  static NextEvent toObject(Map<String, dynamic> json) => NextEvent(
-      groupName: json['groupName'],
-      date: DateTime.parse(json['date']),
-      players: NextEventPlayerMapper.toList(json['players']));
-}
-
-class NextEventPlayerMapper {
-  static List<NextEventPlayer> toList(List<Map<String, dynamic>> arr) => arr
-      .map<NextEventPlayer>((player) => NextEventPlayerMapper.toObject(player))
-      .toList();
-
-  static NextEventPlayer toObject(Map<String, dynamic> json) => NextEventPlayer(
-        id: json['id'],
-        name: json['name'],
-        isConformed: json['isConfirmed'],
-        confirmationDate: DateTime.tryParse(json['confirmationDate'] ?? ''),
-        photo: json['photo'],
-        position: json['position'],
-      );
-}
 
 class HttpGetClientSpy implements HttpGetClient {
   String? url;
