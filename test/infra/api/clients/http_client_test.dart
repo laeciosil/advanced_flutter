@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 
@@ -9,15 +10,30 @@ class HttpClient {
 
   HttpClient({required this.client});
 
-  Future<void> get({required String url, Map<String, dynamic>? params}) async {
+  Future<void> get(
+      {required String url,
+      Map<String, dynamic>? params,
+      Map<String, dynamic>? queryStrings}) async {
     final uri = _buildUri(url: url, params: params);
 
     await client.get(uri);
   }
 
-  Uri _buildUri({required String url, Map<String, dynamic>? params}) {
-    params?.forEach((key, value) => url = url.replaceFirst(':$key', value));
-
+  Uri _buildUri(
+      {required String url,
+      Map<String, dynamic>? params,
+      Map<String, dynamic>? queryString}) {
+    url = params?.keys
+            .fold(
+                url,
+                (result, key) =>
+                    result.replaceFirst(':$key', params[key] ?? ''))
+            .removeSuffix('/') ??
+        url;
+    url = queryString?.keys
+            .fold('$url?', (result, key) => '$result$key=${queryString[key]}&')
+            .removeSuffix('&') ??
+        url;
     return Uri.parse(url);
   }
 }
