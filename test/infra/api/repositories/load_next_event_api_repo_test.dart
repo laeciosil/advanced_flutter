@@ -1,25 +1,8 @@
-import 'package:advanced_flutter/infra/api/clients/http_get_client.dart';
 import 'package:advanced_flutter/infra/api/repositories/load_next_event_api_repo.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../helpers/fakes.dart';
-
-class HttpGetClientSpy implements HttpGetClient {
-  String? url;
-  int callsCount = 0;
-  Map<String, String>? params;
-  dynamic response;
-  Error? error;
-
-  @override
-  Future<T> get<T>({required String url, Map<String, String>? params}) async {
-    this.url = url;
-    this.params = params;
-    callsCount++;
-    if (error != null) throw error!;
-    return response;
-  }
-}
+import '../clients/http_get_client_spy.dart';
 
 void main() {
   late HttpGetClientSpy httpClient;
